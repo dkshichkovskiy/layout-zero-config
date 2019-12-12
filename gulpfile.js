@@ -3,49 +3,33 @@ const sass = require('gulp-sass');
 const inject = require('gulp-inject');
 const clean = require('gulp-clean');
 
-const paths = (() => {
-  const SRC_DIR = './src';
-  const SRC_SCSS_DIR = `${SRC_DIR}/scss`;
-  const SRC_JS_DIR = `${SRC_DIR}/js`;
-
-  const DIST_DIR = './dist';
-  const DIST_CSS_DIR = `${DIST_DIR}/css`;
-  const DIST_JS_DIR = `${DIST_DIR}/js`;
-
-  return {
-    SRC_DIR,
-    SRC_SCSS_DIR,
-    SRC_JS_DIR,
-    DIST_DIR,
-    DIST_CSS_DIR,
-    DIST_JS_DIR,
-  };
-})();
+const SRC_DIR = './src';
+const DIST_DIR = './dist';
 
 function cleanDist() {
-  return src(paths.DIST_DIR, { read: false, allowEmpty: true })
+  return src(DIST_DIR, { read: false, allowEmpty: true })
     .pipe(clean());
 }
 
 function compileSCSS() {
-  return src(`${paths.SRC_SCSS_DIR}/**/*.scss`)
+  return src(`${SRC_DIR}/scss/**/*.scss`)
     .pipe(sass())
-    .pipe(dest(paths.DIST_CSS_DIR));
+    .pipe(dest(`${DIST_DIR}/css`));
 }
 
 function moveJS() {
-  return src(`${paths.SRC_JS_DIR}/**/*.js`)
-    .pipe(dest(paths.DIST_JS_DIR));
+  return src(`${SRC_DIR}/js/**/*.js`)
+    .pipe(dest(`${DIST_DIR}/js`));
 }
 
 function injectStatic() {
-  const cssFiles = src(`${paths.DIST_CSS_DIR}/**/*.css`, { read: false });
-  const jsFiles = src(`${paths.DIST_JS_DIR}/**/*.js`, { read: false });
+  const cssFiles = src(`${DIST_DIR}/css/**/*.css`, { read: false });
+  const jsFiles = src(`${DIST_DIR}/js/**/*.js`, { read: false });
 
-  return src(`${paths.SRC_DIR}/index.html`)
+  return src(`${SRC_DIR}/index.html`)
     .pipe(inject(cssFiles))
     .pipe(inject(jsFiles))
-    .pipe(dest(paths.DIST_DIR));
+    .pipe(dest(DIST_DIR));
 }
 
 exports.clean = cleanDist;

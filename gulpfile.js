@@ -27,8 +27,8 @@ function injectStatic() {
   const cssFiles = src(`${DIST_DIR}/css/**/*.css`, { read: false });
   const jsFiles = src(`${DIST_DIR}/js/**/*.js`, { read: false });
 
-  const pugHeadView = src(`${SRC_DIR}/templates/entry-head.pug`).pipe(pug());
-  const pugBodyView = src(`${SRC_DIR}/templates/entry-body.pug`).pipe(pug());
+  const pugHeadView = src(`${SRC_DIR}/views/entry-head.pug`).pipe(pug());
+  const pugBodyView = src(`${SRC_DIR}/views/entry-body.pug`).pipe(pug());
 
   const pugTransformFn = (filePath, file) => file.contents.toString('utf8');
 

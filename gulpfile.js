@@ -33,15 +33,17 @@ function injectStatic() {
   const pugTransformFn = (filePath, file) => file.contents.toString('utf8');
 
   return src(`${SRC_DIR}/index.html`)
-    .pipe(inject(cssFiles))
-    .pipe(inject(jsFiles))
+    .pipe(inject(cssFiles, { removeTags: true }))
+    .pipe(inject(jsFiles, { removeTags: true }))
     .pipe(inject(pugHeadView, {
       starttag: '<!-- inject:head:{{ext}} -->',
       transform: pugTransformFn,
+      removeTags: true,
     }))
     .pipe(inject(pugBodyView, {
       starttag: '<!-- inject:body:{{ext}} -->',
       transform: pugTransformFn,
+      removeTags: true,
     }))
     .pipe(dest(DIST_DIR));
 }

@@ -3,6 +3,7 @@ const sass = require('gulp-sass');
 const inject = require('gulp-inject');
 const clean = require('gulp-clean');
 const pug = require('gulp-pug');
+const browserSync = require('browser-sync').create();
 
 const SRC_DIR = './src';
 const DIST_DIR = './dist';
@@ -31,10 +32,18 @@ function injectStatic() {
   const pugBodyView = src(`${SRC_DIR}/views/entry-body.pug`).pipe(pug());
 
   const pugTransformFn = (filePath, file) => file.contents.toString('utf8');
+  const resourceTransformFn = (filePath, file, index, length, targetFile) =>
+    inject.transform.call(inject.transform, filePath.replace('/dist', '.'), file, index, length, targetFile);
 
   return src(`${SRC_DIR}/index.html`)
-    .pipe(inject(cssFiles, { removeTags: true }))
-    .pipe(inject(jsFiles, { removeTags: true }))
+    .pipe(inject(cssFiles, {
+      removeTags: true,
+      transform: resourceTransformFn,
+    }))
+    .pipe(inject(jsFiles, {
+      removeTags: true,
+      transform: resourceTransformFn,
+    }))
     .pipe(inject(pugHeadView, {
       starttag: '<!-- inject:head:{{ext}} -->',
       transform: pugTransformFn,
@@ -57,9 +66,14 @@ exports.default = series(
 );
 
 exports.watch = function() {
+  browserSync.init({
+    server: { baseDir: DIST_DIR },
+  });
+
   watch([
     `${SRC_DIR}/scss/**/*.scss`,
     `${SRC_DIR}/js/**/*.js`,
     `${SRC_DIR}/viess/**/*.pug`,
-  ], exports.default);
+  ], { ignoreInitial: false }, exports.default)
+    .on('change', browserSync.reload);
 };

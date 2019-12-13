@@ -73,7 +73,7 @@ exports.watch = function() {
   watch([
     `${SRC_DIR}/scss/**/*.scss`,
     `${SRC_DIR}/js/**/*.js`,
-    `${SRC_DIR}/viess/**/*.pug`,
+    `${SRC_DIR}/views/**/*.pug`,
   ], { ignoreInitial: false }, exports.default)
     .on('change', browserSync.reload);
 };

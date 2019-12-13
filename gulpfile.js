@@ -1,4 +1,4 @@
-const { src, dest, series, parallel } = require('gulp');
+const { src, dest, series, parallel, watch } = require('gulp');
 const sass = require('gulp-sass');
 const inject = require('gulp-inject');
 const clean = require('gulp-clean');
@@ -49,8 +49,17 @@ function injectStatic() {
 }
 
 exports.clean = cleanDist;
+
 exports.default = series(
   cleanDist,
   parallel(compileSCSS, moveJS),
   injectStatic,
 );
+
+exports.watch = function() {
+  watch([
+    `${SRC_DIR}/scss/**/*.scss`,
+    `${SRC_DIR}/js/**/*.js`,
+    `${SRC_DIR}/viess/**/*.pug`,
+  ], exports.default);
+};

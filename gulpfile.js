@@ -3,6 +3,7 @@ const sass = require('gulp-sass');
 const inject = require('gulp-inject');
 const clean = require('gulp-clean');
 const pug = require('gulp-pug');
+const autoprefixer = require('gulp-autoprefixer');
 const browserSync = require('browser-sync').create();
 
 const SRC_DIR = './src';
@@ -16,6 +17,9 @@ function cleanDist() {
 function compileSCSS() {
   return src(`${SRC_DIR}/scss/**/*.scss`)
     .pipe(sass())
+    .pipe(autoprefixer({
+      cascade: false,
+    }))
     .pipe(dest(`${DIST_DIR}/css`));
 }
 

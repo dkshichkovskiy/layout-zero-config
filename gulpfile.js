@@ -4,6 +4,7 @@ const inject = require('gulp-inject');
 const clean = require('gulp-clean');
 const pug = require('gulp-pug');
 const autoprefixer = require('gulp-autoprefixer');
+const image = require('gulp-image');
 const browserSync = require('browser-sync').create();
 
 const SRC_DIR = './src';
@@ -26,6 +27,16 @@ function compileSCSS() {
 function moveJS() {
   return src(`${SRC_DIR}/js/**/*.js`)
     .pipe(dest(`${DIST_DIR}/js`));
+}
+
+function moveImages() {
+  return src(`${SRC_DIR}/images/**/*`)
+    .pipe(image({
+      pngquant: true,
+      optipng: false,
+      svgo: true,
+    }))
+    .pipe(dest(`${DIST_DIR}/images`));
 }
 
 function injectStatic() {
@@ -65,7 +76,7 @@ exports.clean = cleanDist;
 
 exports.default = series(
   cleanDist,
-  parallel(compileSCSS, moveJS),
+  parallel(compileSCSS, moveJS, moveImages),
   injectStatic,
 );
 
@@ -78,6 +89,7 @@ exports.watch = function() {
     `${SRC_DIR}/scss/**/*.scss`,
     `${SRC_DIR}/js/**/*.js`,
     `${SRC_DIR}/views/**/*.pug`,
+    `${SRC_DIR}/images/**/*`,
   ], { ignoreInitial: false }, exports.default)
     .on('change', browserSync.reload);
 };

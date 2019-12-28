@@ -39,6 +39,11 @@ function moveImages() {
     .pipe(dest(`${DIST_DIR}/images`));
 }
 
+function moveFonts() {
+  return src(`${SRC_DIR}/fonts/**/*`)
+    .pipe(dest(`${DIST_DIR}/fonts`));
+}
+
 function injectStatic() {
   const cssFiles = src(`${DIST_DIR}/css/**/*.css`, { read: false });
   const jsFiles = src(`${DIST_DIR}/js/**/*.js`, { read: false });
@@ -76,7 +81,7 @@ exports.clean = cleanDist;
 
 exports.default = series(
   cleanDist,
-  parallel(compileSCSS, moveJS, moveImages),
+  parallel(compileSCSS, moveJS, moveImages, moveFonts),
   injectStatic,
 );
 
@@ -90,6 +95,7 @@ exports.watch = function() {
     `${SRC_DIR}/js/**/*.js`,
     `${SRC_DIR}/views/**/*.pug`,
     `${SRC_DIR}/images/**/*`,
+    `${SRC_DIR}/fonts/**/*`,
   ], { ignoreInitial: false }, exports.default)
     .on('change', browserSync.reload);
 };

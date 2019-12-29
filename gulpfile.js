@@ -5,6 +5,7 @@ const clean = require('gulp-clean');
 const pug = require('gulp-pug');
 const autoprefixer = require('gulp-autoprefixer');
 const image = require('gulp-image');
+const plumber = require('gulp-plumber');
 const browserSync = require('browser-sync').create();
 
 const SRC_DIR = './src';
@@ -17,6 +18,7 @@ function cleanDist() {
 
 function compileSCSS() {
   return src(`${SRC_DIR}/scss/**/*.scss`)
+    .pipe(plumber())
     .pipe(sass())
     .pipe(autoprefixer({
       cascade: false,
@@ -26,11 +28,13 @@ function compileSCSS() {
 
 function moveJS() {
   return src(`${SRC_DIR}/js/**/*.js`)
+    .pipe(plumber())
     .pipe(dest(`${DIST_DIR}/js`));
 }
 
 function moveImages() {
   return src(`${SRC_DIR}/images/**/*`)
+    .pipe(plumber())
     .pipe(image({
       pngquant: true,
       optipng: false,
@@ -41,6 +45,7 @@ function moveImages() {
 
 function moveFonts() {
   return src(`${SRC_DIR}/fonts/**/*`)
+    .pipe(plumber())
     .pipe(dest(`${DIST_DIR}/fonts`));
 }
 
@@ -48,14 +53,17 @@ function injectStatic() {
   const cssFiles = src(`${DIST_DIR}/css/**/*.css`, { read: false });
   const jsFiles = src(`${DIST_DIR}/js/**/*.js`, { read: false });
 
-  const pugHeadView = src(`${SRC_DIR}/views/entry-head.pug`).pipe(pug({ pretty: true }));
-  const pugBodyView = src(`${SRC_DIR}/views/entry-body.pug`).pipe(pug({ pretty: true }));
+  const pugHeadView = src(`${SRC_DIR}/views/entry-head.pug`)
+    .pipe(pug({ pretty: true }));
+  const pugBodyView = src(`${SRC_DIR}/views/entry-body.pug`)
+    .pipe(pug({ pretty: true }));
 
   const pugTransformFn = (filePath, file) => file.contents.toString('utf8');
   const resourceTransformFn = (filePath, file, index, length, targetFile) =>
     inject.transform.call(inject.transform, filePath.replace('/dist', '.'), file, index, length, targetFile);
 
   return src(`${SRC_DIR}/index.html`)
+    .pipe(plumber())
     .pipe(inject(cssFiles, {
       removeTags: true,
       transform: resourceTransformFn,

@@ -6,6 +6,7 @@ const pug = require('gulp-pug');
 const autoprefixer = require('gulp-autoprefixer');
 const image = require('gulp-image');
 const plumber = require('gulp-plumber');
+const babel = require('gulp-babel');
 const browserSync = require('browser-sync').create();
 
 const SRC_DIR = './src';
@@ -29,6 +30,7 @@ function compileSCSS() {
 function moveJS() {
   return src(`${SRC_DIR}/js/**/*.js`)
     .pipe(plumber())
+    .pipe(babel())
     .pipe(dest(`${DIST_DIR}/js`));
 }
 

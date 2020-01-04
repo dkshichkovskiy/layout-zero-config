@@ -8,6 +8,7 @@ const image = require('gulp-image');
 const plumber = require('gulp-plumber');
 const babel = require('gulp-babel');
 const browserSync = require('browser-sync').create();
+const minifyJS = require('gulp-minify');
 
 const SRC_DIR = './src';
 const DIST_DIR = './dist';
@@ -31,6 +32,9 @@ function moveJS() {
   return src(`${SRC_DIR}/js/**/*.js`)
     .pipe(plumber())
     .pipe(babel())
+    .pipe(minifyJS({
+      ext: { min: '.min.js' },
+    }))
     .pipe(dest(`${DIST_DIR}/js`));
 }
 

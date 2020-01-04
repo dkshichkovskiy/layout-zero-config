@@ -9,6 +9,8 @@ const plumber = require('gulp-plumber');
 const babel = require('gulp-babel');
 const browserSync = require('browser-sync').create();
 const minifyJS = require('gulp-minify');
+const csso = require('gulp-csso');
+const htmlmin = require('gulp-htmlmin');
 
 const SRC_DIR = './src';
 const DIST_DIR = './dist';
@@ -25,6 +27,7 @@ function compileSCSS() {
     .pipe(autoprefixer({
       cascade: false,
     }))
+    .pipe(csso())
     .pipe(dest(`${DIST_DIR}/css`));
 }
 
@@ -88,6 +91,7 @@ function injectStatic() {
       transform: pugTransformFn,
       removeTags: true,
     }))
+    .pipe(htmlmin({ collapseWhitespace: true }))
     .pipe(dest(DIST_DIR));
 }
 
